@@ -36,3 +36,16 @@
     transform: rotate(360deg);
   }
 }
+.input-group-btn{
+  margin-left:-3px
+}
+.pr-5{
+  padding-right: 5px;
+}
+label{
+  font-weight: bold;
+}
+.text-right{
+  float:right;
+  cursor: pointer;
+}
