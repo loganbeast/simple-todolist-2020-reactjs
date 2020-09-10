@@ -8,6 +8,9 @@ class TaskItem extends Component {
     onDelete=() =>{
         this.props.onDelete(this.props.task.id);
     }
+    onUpdate =()=>{
+        this.props.onUpdate(this.props.task.id);
+    }
     render() {
         return (
             <tr>
@@ -23,7 +26,11 @@ class TaskItem extends Component {
                     </span>
                 </td>
                 <td className="text-center">
-                    <button type="submit" className="btn btn-danger mr-1">
+                    <button 
+                    type="submit" 
+                    className="btn btn-danger mr-1"
+                    onClick={this.onUpdate}
+                    >
                         Edit
                     </button>&nbsp;
 

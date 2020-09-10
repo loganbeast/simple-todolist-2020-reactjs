@@ -5,8 +5,36 @@ class TaskForm extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            id:"",
             name: "",
-            status: false
+            status: false,
+            
+        }
+    }
+    componentDidMount(){
+        if(this.props.task){
+            this.setState({
+                name :this.props.task.name,
+                status:this.props.task.status,
+                id:this.props.task.id
+            });
+        }
+    }
+    componentWillReceiveProps(nextProps){
+        if(nextProps && nextProps.task){
+            this.setState({
+                name :nextProps.task.name,
+                status:nextProps.task.status,
+                id:nextProps.task.id
+            })
+        }
+        else if(nextProps.task === null){
+            this.state = {
+                id:"",
+                name: "",
+                status: false,
+                
+            }
         }
     }
     onChangeValue = (event) => {
@@ -22,7 +50,6 @@ class TaskForm extends Component {
     }
     onSubmit = (event) => {
         event.preventDefault();
-        // console.log(this.state);
         this.props.onSaveTaskForm(this.state);
         this.onClear();
         this.props.closeTaskForm();
@@ -35,10 +62,11 @@ class TaskForm extends Component {
         })
     }
     render() {
+        let {id} = this.state;
         return (
             <div className="card">
                 <div className="card-header bg-warning text-danger ">
-                    Add more work
+                    {id !== '' ? "Update work" : "Add more work"}
                   <span className="fas fa-times-circle text-right" onClick={() => { this.props.closeTaskForm() }}></span>
                 </div>
                 <div className="card-body">

@@ -10,7 +10,8 @@ class App extends Component {
     super(props);
     this.state = {
       tasks: [],
-      displayForm: true
+      displayForm: false,
+      taskEditting: null
     };
   }
   componentDidMount() {
@@ -31,65 +32,104 @@ class App extends Component {
   }
   // Open and close taskform
   openTaskForm = () => {
-    this.setState({
-      displayForm: !this.state.displayForm
-    });
+    if (this.state.displayForm && this.state.taskEditting !== null) {
+      this.setState({
+        displayForm: true,
+        taskEditting: null
+      })
+    }
+    else {
+      this.setState({
+        displayForm: !this.state.displayForm,
+        taskEditting: null
+      });
+    }
   }
   closeTaskForm = () => {
     this.setState({
-      displayForm: !this.state.displayForm
+      displayForm: false
+      // taskEditting:null
+    });
+  }
+  showTaskForm = () => {
+    this.setState({
+      displayForm: true
+
     });
   }
   //handle save taskform
   onSubmit = (data) => {
-    let {tasks} = this.state;
-    data.id = this.generateId();
-    tasks.push(data);
+    console.log(data);
+    let { tasks } = this.state;
+    if (data.id === "") {
+      data.id = this.generateId();
+      tasks.push(data);
+    } else {
+      let index = this.findIndex(data.id);
+      tasks[index] = data;
+    }
     this.setState({
-      tasks : tasks
+      tasks: tasks,
+      taskEditting: null
     });
-    localStorage.setItem('tasks',JSON.stringify(tasks));
+    localStorage.setItem('tasks', JSON.stringify(tasks));
   };
   onUpdateStatus = (id) => {
-    let {tasks} = this.state;
+    let { tasks } = this.state;
     let index = this.findIndex(id);
-    if(index !== -1){
+    if (index !== -1) {
       tasks[index].status = !tasks[index].status;
     }
     this.setState({
-      tasks : tasks
+      tasks: tasks
     })
-    localStorage.setItem('tasks',JSON.stringify(tasks));
-    
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+
   };
-  onDelete =(id)=>{
-    let {tasks} = this.state;
+  onDelete = (id) => {
+    let { tasks } = this.state;
     let index = this.findIndex(id);
-    if(index !== -1){
-      tasks.splice(index,1);
+    if (index !== -1) {
+      tasks.splice(index, 1);
     }
     this.setState({
-      tasks : tasks
+      tasks: tasks
     })
-    localStorage.setItem('tasks',JSON.stringify(tasks));
-    this.closeTaskForm();
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+    if (this.state.displayForm === true) this.closeTaskForm();
   }
-  findIndex(id){
-    let {tasks} =this.state;
+  onUpdate = (id) => {
+    let { tasks } = this.state;
+
+    let index = this.findIndex(id);
+    // console.log(tasks[index]);
+    this.setState({
+      taskEditting: tasks[index]
+    })
+    // console.log(this.state.taskEditting);
+    // loi dang bi o day
+    this.showTaskForm();
+
+  }
+  findIndex(id) {
+    let { tasks } = this.state;
     let result = -1;
-    tasks.forEach((task,index)=> {
-      if(task.id  === id) 
-      {
+    tasks.forEach((task, index) => {
+      if (task.id === id) {
         result = index;
       }
-      
+
     });
     return result;
-    
+
   }
   render() {
-    let {  displayForm } = this.state;
-    let elmTaskForm = displayForm ? <TaskForm closeTaskForm={this.closeTaskForm} onSaveTaskForm={this.onSubmit} /> : "";
+    let { taskEditting, displayForm } = this.state;
+    let elmTaskForm = displayForm ? <TaskForm
+      closeTaskForm={this.closeTaskForm}
+      onSaveTaskForm={this.onSubmit}
+      task={taskEditting}
+    /> : "";
     return (
       <div className="container">
         <div className="header">
@@ -107,13 +147,13 @@ class App extends Component {
               <span className="fas fa-plus-circle mr-1 " > </span>
                 Add more work
             </button>
-        
+
             {/* Control */}
             <Control></Control>
             <div className="row mt-1">
               {/* TaskList */}
               <div className="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
-                <TaskList tasks={this.state.tasks} onUpdateStatus ={this.onUpdateStatus} onDelete={this.onDelete}></TaskList>
+                <TaskList tasks={this.state.tasks} onUpdateStatus={this.onUpdateStatus} onDelete={this.onDelete} onUpdate={this.onUpdate}></TaskList>
               </div>
             </div>
           </div>
