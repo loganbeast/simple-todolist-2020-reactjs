@@ -12,6 +12,7 @@ class TaskForm extends Component {
         }
     }
     componentDidMount(){
+        console.log(this.props.task);
         if(this.props.task){
             this.setState({
                 name :this.props.task.name,
@@ -29,12 +30,12 @@ class TaskForm extends Component {
             })
         }
         else if(nextProps.task === null){
-            this.state = {
+            this.setState({
                 id:"",
                 name: "",
                 status: false,
                 
-            }
+            });
         }
     }
     onChangeValue = (event) => {

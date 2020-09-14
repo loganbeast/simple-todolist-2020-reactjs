@@ -11,7 +11,11 @@ class App extends Component {
     this.state = {
       tasks: [],
       displayForm: false,
-      taskEditting: null
+      taskEditting: null,
+      filter: {
+        filterName: '',
+        filterStatus: -1
+      }
     };
   }
   componentDidMount() {
@@ -111,6 +115,19 @@ class App extends Component {
     this.showTaskForm();
 
   }
+  onFilter = (filterName, filterStatus) => {
+    // console.log(filterName + '-' + filterStatus);
+    // console.log(typeof filterStatus);
+    filterStatus = parseInt(filterStatus, 10);
+    // console.log(typeof filterStatus);
+    this.setState({
+      filter: {
+        filterName: filterName.toLowerCase(),
+        filterStatus: filterStatus
+      }
+    })
+
+  }
   findIndex(id) {
     let { tasks } = this.state;
     let result = -1;
@@ -123,8 +140,28 @@ class App extends Component {
     return result;
 
   }
+
   render() {
-    let { taskEditting, displayForm } = this.state;
+    let { taskEditting, tasks, displayForm, filter } = this.state;
+    if (filter) {
+      if (filter.filterName) {
+        tasks = tasks.filter((task) => {
+          return task.name.toLowerCase().indexOf(filter.filterName) !== -1;
+        });
+      }  
+      //khac null , khac undefined,khac 0
+      tasks = tasks.filter((task) => {
+        if (filter.filterStatus === -1) {
+          return tasks;
+        } else {
+          return task.status === (filter.filterStatus === 1 ? true : false);
+        }
+      })
+      // this.setState({
+      //   tasks:tasks
+      // });
+      console.log(tasks);
+    }
     let elmTaskForm = displayForm ? <TaskForm
       closeTaskForm={this.closeTaskForm}
       onSaveTaskForm={this.onSubmit}
@@ -144,7 +181,7 @@ class App extends Component {
           {/* TaskControl */}
           <div className={displayForm ? "col-8 col-sm-8 col-md-8 col-lg-8 col-xl-8" : "col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12"}>
             <button type="button" className="btn btn-primary" onClick={this.openTaskForm}>
-              <span className="fas fa-plus-circle mr-1 " > </span>
+              <span className="fas fa-plus-circle mr-1 "></span>
                 Add more work
             </button>
 
@@ -153,7 +190,7 @@ class App extends Component {
             <div className="row mt-1">
               {/* TaskList */}
               <div className="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
-                <TaskList tasks={this.state.tasks} onUpdateStatus={this.onUpdateStatus} onDelete={this.onDelete} onUpdate={this.onUpdate}></TaskList>
+                <TaskList tasks={tasks} onUpdateStatus={this.onUpdateStatus} onDelete={this.onDelete} onUpdate={this.onUpdate} onFilter={this.onFilter}></TaskList>
               </div>
             </div>
           </div>

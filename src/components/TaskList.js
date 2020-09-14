@@ -2,9 +2,30 @@ import React, { Component } from 'react';
 
 import TaskItem from './TaskItem'
 class TaskList extends Component {
-    
+    constructor(props){
+      super(props);
+      this.state ={
+        filterName : '',
+        filterStatus : -1
+      };
+    }
+    onChange=(event) =>{
+      let target = event.target;
+      let name = target.name;
+      let value = target.value;
+      this.props.onFilter(
+        name === 'filterName'? value:this.state.filterName,
+        name==='filterStatus'?value : this.state.filterStatus
+
+      );
+      this.setState({
+        [name] :value
+      })
+      
+    }
     render(){
         var {tasks} = this.props; 
+        var{filterName,filterStatus} = this.state;
         var elmTask = tasks.map((task,index) => {
           return <TaskItem key = {task.id} index = {index} task ={task} onUpdateStatus={this.props.onUpdateStatus} onDelete={this.props.onDelete} onUpdate={this.props.onUpdate}></TaskItem>;
         });
@@ -27,7 +48,9 @@ class TaskList extends Component {
                             <input
                               type="text"
                               className="form-control"
-                              name=""
+                              name="filterName"
+                              value={filterName}
+                              onChange ={this.onChange}
                             />
                           </div>
                         </td>
@@ -35,10 +58,14 @@ class TaskList extends Component {
                           <div className="form-group">
                             <select
                               className="form-control"
-                              name="" >
+                              name="filterStatus" 
+                              value={filterStatus}
+                              onChange ={this.onChange}
+                              >
+                                
                               <option value={-1}>All</option>
-                              <option value={0}>Active</option>
-                              <option value={1}>Unavailable</option>
+                              <option value={1}>Active</option>
+                              <option value={0}>Deactive</option>
                             </select>
                           </div>
                         </td>
